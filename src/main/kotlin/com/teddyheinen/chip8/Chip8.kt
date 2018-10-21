@@ -31,7 +31,7 @@ fun disassemble(emuState: EmuState): String {
 fun decode(decoder: Decoder, address: Int, msb: Byte, lsb: Byte) {
     val opCode = (msb.toInt() shl 8 or lsb.toInt().and(0xff)).and(0xffff)
     decoder.before(opCode, address)
-    when (msb.high()) {
+    when (msb.high) {
         0x0 -> {
             when (msb.toInt() shl 8 or lsb.toInt()) {
                 0x00e0 -> decoder.clear()
@@ -41,15 +41,15 @@ fun decode(decoder: Decoder, address: Int, msb: Byte, lsb: Byte) {
         }
         0x1 -> decoder.jmp(address(msb, lsb))
         0x2 -> decoder.call(address(msb, lsb))
-        0x3 -> decoder.jeq(msb.low(), lsb.toInt())
-        0x4 -> decoder.jneq(msb.low(), lsb.toInt())
-        0x5 -> decoder.jeqr(msb.low(), lsb.high())
-        0x6 -> decoder.set(msb.low(), lsb.toInt())
-        0x7 -> decoder.add(msb.low(), lsb.toInt())
+        0x3 -> decoder.jeq(msb.low, lsb.toInt())
+        0x4 -> decoder.jneq(msb.low, lsb.toInt())
+        0x5 -> decoder.jeqr(msb.low, lsb.high)
+        0x6 -> decoder.set(msb.low, lsb.toInt())
+        0x7 -> decoder.add(msb.low, lsb.toInt())
         0x8 -> {
-            val reg1 = msb.low()
-            val reg2 = lsb.high()
-            when (lsb.low()) {
+            val reg1 = msb.low
+            val reg2 = lsb.high
+            when (lsb.low) {
                 0x0 -> decoder.setr(reg1, reg2)
                 0x1 -> decoder.or(reg1, reg2)
                 0x2 -> decoder.and(reg1, reg2)
@@ -62,20 +62,20 @@ fun decode(decoder: Decoder, address: Int, msb: Byte, lsb: Byte) {
                 else -> decoder.unknown(opCode, address)
             }
         }
-        0x9 -> decoder.jneqr(msb.low(), lsb.high())
+        0x9 -> decoder.jneqr(msb.low, lsb.high)
         0xa -> decoder.seti(address(msb, lsb))
         0xb -> decoder.jmpv0(address(msb, lsb))
-        0xc -> decoder.rand(msb.low(), lsb.toInt())
-        0xd -> decoder.draw(msb.low(), lsb.high(), lsb.low())
+        0xc -> decoder.rand(msb.low, lsb.toInt())
+        0xd -> decoder.draw(msb.low, lsb.high, lsb.low)
         0xe -> {
             when (lsb.toInt() or 0xff) {
-                0x9e -> decoder.jkey(msb.low())
-                0xa1 -> decoder.jnkey(msb.low())
+                0x9e -> decoder.jkey(msb.low)
+                0xa1 -> decoder.jnkey(msb.low)
                 else -> decoder.unknown(opCode, address)
             }
         }
         0xf -> {
-            val reg = msb.low()
+            val reg = msb.low
             when (lsb.toInt() or 0xff) {
                 0x07 -> decoder.getdelay(reg)
                 0x0a -> decoder.waitkey(reg)
