@@ -109,19 +109,22 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun shl(reg1: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+        state.registers[0xf] = state.registers[reg1].and(0x1)
+        state.registers[reg1] = (state.registers[reg1] * 2).toByte();
+        state.pc += 2;    }
 
-    override fun jneqr(reg1: Int, reg2: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun skipNotEqualRegister(reg1: Int, reg2: Int) {
+        if (state.registers[reg1] != state.registers[reg2]) {
+            state.pc += 2;
+        }
+        state.pc += 2;    }
 
     override fun seti(value: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.index = value;
     }
 
     override fun jmpv0(address: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.pc = state.pc + address.toByte();
     }
 
     override fun rand(reg: Int, value: Int) {
@@ -136,12 +139,16 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun jkey(reg: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+        if(state.keys[state.registers[reg].toInt()] != 0.toByte()) {
+            state.pc += 2
+        }
+        state.pc += 2    }
 
     override fun jnkey(reg: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+        if(state.keys[state.registers[reg].toInt()] == 0.toByte()) {
+            state.pc += 2
+        }
+        state.pc += 2    }
 
     override fun getdelay(reg: Int) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

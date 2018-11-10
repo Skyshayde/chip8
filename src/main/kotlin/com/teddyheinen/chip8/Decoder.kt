@@ -21,7 +21,7 @@ interface Decoder {
     fun shr (reg1: Int)
     fun subn (reg1: Int, reg2: Int)
     fun shl (reg1: Int)
-    fun jneqr (reg1: Int, reg2: Int)
+    fun skipNotEqualRegister (reg1: Int, reg2: Int)
     fun seti (value: Int)
     fun jmpv0 (address: Int)
     fun rand (reg: Int, value: Int)

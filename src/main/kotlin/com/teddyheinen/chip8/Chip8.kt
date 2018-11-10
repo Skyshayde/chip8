@@ -62,7 +62,7 @@ fun decode(decoder: Decoder, address: Int, msb: Byte, lsb: Byte) {
                 else -> decoder.unknown(opCode, address)
             }
         }
-        0x9 -> decoder.jneqr(msb.low, lsb.high)
+        0x9 -> decoder.skipNotEqualRegister(msb.low, lsb.high)
         0xa -> decoder.seti(address(msb, lsb))
         0xb -> decoder.jmpv0(address(msb, lsb))
         0xc -> decoder.rand(msb.low, lsb.toInt())

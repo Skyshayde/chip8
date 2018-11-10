@@ -84,8 +84,8 @@ class Disassembler(): Decoder {
         builder.line("shl v${reg1.hex}")
     }
 
-    override fun jneqr(reg1: Int, reg2: Int) {
-        builder.line("jneqr v${reg1.hex}, v${reg2.hex}")
+    override fun skipNotEqualRegister(reg1: Int, reg2: Int) {
+        builder.line("skipNotEqualRegister v${reg1.hex}, v${reg2.hex}")
     }
 
     override fun seti(value: Int) {
