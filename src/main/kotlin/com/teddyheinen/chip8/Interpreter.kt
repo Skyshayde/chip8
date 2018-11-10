@@ -2,9 +2,11 @@ package com.teddyheinen.chip8
 
 import java.util.*
 import kotlin.experimental.and
+import kotlin.experimental.or
+import kotlin.experimental.xor
 
 
-class Interpreter (val state: EmuState): Decoder {
+class Interpreter(val state: EmuState) : Decoder {
     override fun before(opCode: Int, address: Int) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -43,28 +45,32 @@ class Interpreter (val state: EmuState): Decoder {
 
     override fun set(reg: Int, value: Int) {
         state.registers[reg] = value.toByte();
-        state.pc += 2
+        state.pc += 2;
     }
 
     override fun add(reg: Int, value: Int) {
         state.registers[reg] = (state.registers[reg] + value).toByte();
-        state.pc += 2
+        state.pc += 2;
     }
 
-    override fun setr(reg1: Int, reg2: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun copy(reg1: Int, reg2: Int) {
+        state.registers[reg1] = state.registers[reg2]
+        state.pc += 2;
     }
 
     override fun or(reg1: Int, reg2: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.registers[reg1] = state.registers[reg1].or(state.registers[reg2]);
+        state.pc += 2;
     }
 
     override fun and(reg1: Int, reg2: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.registers[reg1] = state.registers[reg1].and(state.registers[reg2]);
+        state.pc += 2;
     }
 
     override fun xor(reg1: Int, reg2: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.registers[reg1] = state.registers[reg1].xor(state.registers[reg2]);
+        state.pc += 2;
     }
 
     override fun addr(reg1: Int, reg2: Int) {

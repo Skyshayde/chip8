@@ -50,7 +50,7 @@ fun decode(decoder: Decoder, address: Int, msb: Byte, lsb: Byte) {
             val reg1 = msb.low
             val reg2 = lsb.high
             when (lsb.low) {
-                0x0 -> decoder.setr(reg1, reg2)
+                0x0 -> decoder.copy(reg1, reg2)
                 0x1 -> decoder.or(reg1, reg2)
                 0x2 -> decoder.and(reg1, reg2)
                 0x3 -> decoder.xor(reg1, reg2)

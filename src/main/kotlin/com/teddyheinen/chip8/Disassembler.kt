@@ -48,8 +48,8 @@ class Disassembler(): Decoder {
         builder.line("add v${reg.hex}, 0x${value.hex}")
     }
 
-    override fun setr(reg1: Int, reg2: Int) {
-        builder.line("setr v${reg1.hex}, v${reg2.hex}")
+    override fun copy(reg1: Int, reg2: Int) {
+        builder.line("copy v${reg1.hex}, v${reg2.hex}")
     }
 
     override fun or(reg1: Int, reg2: Int) {

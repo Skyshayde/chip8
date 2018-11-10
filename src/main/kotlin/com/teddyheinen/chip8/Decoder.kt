@@ -12,7 +12,7 @@ interface Decoder {
     fun jeqr(reg1: Int, reg2: Int)
     fun set(reg: Int, value: Int)
     fun add(reg: Int, value: Int)
-    fun setr(reg1: Int, reg2: Int)
+    fun copy(reg1: Int, reg2: Int)
     fun or (reg1: Int, reg2: Int)
     fun and (reg1: Int, reg2: Int)
     fun xor (reg1: Int, reg2: Int)
