@@ -43,10 +43,12 @@ class Interpreter (val state: EmuState): Decoder {
 
     override fun set(reg: Int, value: Int) {
         state.registers[reg] = value.toByte();
+        state.pc += 2
     }
 
     override fun add(reg: Int, value: Int) {
         state.registers[reg] = (state.registers[reg] + value).toByte();
+        state.pc += 2
     }
 
     override fun setr(reg1: Int, reg2: Int) {
@@ -101,7 +103,7 @@ class Interpreter (val state: EmuState): Decoder {
         val b: ByteArray = ByteArray(1);
         Random().nextBytes(b)
         state.registers[reg] = b[0].and(value.toByte());
-
+        state.pc += 2
     }
 
     override fun draw(reg1: Int, reg2: Int, value: Int) {
