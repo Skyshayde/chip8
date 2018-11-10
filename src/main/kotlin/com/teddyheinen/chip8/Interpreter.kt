@@ -20,7 +20,8 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun ret() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.pc = state.stack.last();
+        state.sp--;
     }
 
     override fun jmp(address: Int) {
@@ -28,19 +29,30 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun call(address: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.sp++;
+        state.stack[state.sp] = state.pc
+        state.pc = address;
     }
 
-    override fun jeq(reg: Int, value: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun skipEqual(reg: Int, value: Int) {
+        if (state.registers[reg] == value.toByte()) {
+            state.pc += 2;
+        }
+        state.pc += 2;
     }
 
-    override fun jneq(reg: Int, value: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun skipNotEqual(reg: Int, value: Int) {
+        if (state.registers[reg] != value.toByte()) {
+            state.pc += 2;
+        }
+        state.pc += 2;
     }
 
-    override fun jeqr(reg1: Int, reg2: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun skipEqualRegister(reg1: Int, reg2: Int) {
+        if (state.registers[reg1] == state.registers[reg2]) {
+            state.pc += 2;
+        }
+        state.pc += 2;
     }
 
     override fun set(reg: Int, value: Int) {
@@ -74,19 +86,26 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun addr(reg1: Int, reg2: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.registers[reg1] = (state.registers[reg1] + state.registers[reg2]).toByte();
+        state.pc += 2;
     }
 
-    override fun sub(reg1: Int, reg2: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun subr(reg1: Int, reg2: Int) {
+        state.registers[reg1] = (state.registers[reg1] - state.registers[reg2]).toByte();
+        state.registers[0xF] = if (state.registers[reg1] > state.registers[reg2]) 1 else 0
+        state.pc += 2;
     }
 
     override fun shr(reg1: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.registers[0xf] = state.registers[reg1].and(0x1)
+        state.registers[reg1] = (state.registers[reg1] / 2).toByte();
+        state.pc += 2;
     }
 
-    override fun subb(reg1: Int, reg2: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun subn(reg1: Int, reg2: Int) {
+        state.registers[reg1] = (state.registers[reg2] - state.registers[reg1]).toByte();
+        state.registers[0xF] = if (state.registers[reg2] > state.registers[reg1]) 1 else 0
+        state.pc += 2;
     }
 
     override fun shl(reg1: Int) {

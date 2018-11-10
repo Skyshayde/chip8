@@ -41,9 +41,9 @@ fun decode(decoder: Decoder, address: Int, msb: Byte, lsb: Byte) {
         }
         0x1 -> decoder.jmp(address(msb, lsb))
         0x2 -> decoder.call(address(msb, lsb))
-        0x3 -> decoder.jeq(msb.low, lsb.toInt())
-        0x4 -> decoder.jneq(msb.low, lsb.toInt())
-        0x5 -> decoder.jeqr(msb.low, lsb.high)
+        0x3 -> decoder.skipEqual(msb.low, lsb.toInt())
+        0x4 -> decoder.skipNotEqual(msb.low, lsb.toInt())
+        0x5 -> decoder.skipEqualRegister(msb.low, lsb.high)
         0x6 -> decoder.set(msb.low, lsb.toInt())
         0x7 -> decoder.add(msb.low, lsb.toInt())
         0x8 -> {
@@ -55,9 +55,9 @@ fun decode(decoder: Decoder, address: Int, msb: Byte, lsb: Byte) {
                 0x2 -> decoder.and(reg1, reg2)
                 0x3 -> decoder.xor(reg1, reg2)
                 0x4 -> decoder.addr(reg1, reg2)
-                0x5 -> decoder.sub(reg1, reg2)
+                0x5 -> decoder.subr(reg1, reg2)
                 0x6 -> decoder.shr(reg1)
-                0x7 -> decoder.subb(reg1, reg2)
+                0x7 -> decoder.subn(reg1, reg2)
                 0xe -> decoder.shl(reg1)
                 else -> decoder.unknown(opCode, address)
             }

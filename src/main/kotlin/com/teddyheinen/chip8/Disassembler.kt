@@ -28,16 +28,16 @@ class Disassembler(): Decoder {
         builder.line("call 0x${address.hex}")
     }
 
-    override fun jeq(reg: Int, value: Int) {
-        builder.line("jeq v${reg.hex}, 0x${value.hex}")
+    override fun skipEqual(reg: Int, value: Int) {
+        builder.line("skipEqual v${reg.hex}, 0x${value.hex}")
     }
 
-    override fun jneq(reg: Int, value: Int) {
-        builder.line("jneq v${reg.hex}, 0x${value.hex}")
+    override fun skipNotEqual(reg: Int, value: Int) {
+        builder.line("skipNotEqual v${reg.hex}, 0x${value.hex}")
     }
 
-    override fun jeqr(reg1: Int, reg2: Int) {
-        builder.line("jeqr v${reg1.hex}, v${reg2.hex}")
+    override fun skipEqualRegister(reg1: Int, reg2: Int) {
+        builder.line("skipEqualRegister v${reg1.hex}, v${reg2.hex}")
     }
 
     override fun set(reg: Int, value: Int) {
@@ -68,16 +68,16 @@ class Disassembler(): Decoder {
         builder.line("addr v${reg1.hex}, v${reg2.hex}")
     }
 
-    override fun sub(reg1: Int, reg2: Int) {
-        builder.line("sub v${reg1.hex}, v${reg2.hex}")
+    override fun subr(reg1: Int, reg2: Int) {
+        builder.line("subr v${reg1.hex}, v${reg2.hex}")
     }
 
     override fun shr(reg1: Int) {
         builder.line("shr v${reg1.hex}")
     }
 
-    override fun subb(reg1: Int, reg2: Int) {
-        builder.line("subb v${reg1.hex}, v${reg2.hex}")
+    override fun subn(reg1: Int, reg2: Int) {
+        builder.line("subn v${reg1.hex}, v${reg2.hex}")
     }
 
     override fun shl(reg1: Int) {
