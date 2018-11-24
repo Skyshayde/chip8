@@ -121,10 +121,12 @@ class Interpreter(val state: EmuState) : Decoder {
 
     override fun seti(value: Int) {
         state.index = value;
+        state.pc += 2
     }
 
     override fun jmpv0(address: Int) {
         state.pc = state.pc + address.toByte();
+        state.pc += 2
     }
 
     override fun rand(reg: Int, value: Int) {
@@ -173,26 +175,35 @@ class Interpreter(val state: EmuState) : Decoder {
 
     override fun addi(reg: Int) {
         state.index = state.index + state.registers[reg]
+        state.pc += 2
     }
 
     override fun spritei(reg: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.index = state.registers[reg] * 5
+        state.pc += 2
     }
 
     override fun bcd(reg: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        var index: Int = state.index
+        for(i in state.registers[reg].toString()) {
+            state.ram[index] = i.toByte()
+            index++
+        }
+        state.pc += 2
     }
 
     override fun push(reg: Int) {
         for (i in 0..reg) {
             state.ram[state.index + i] = state.registers[i]
         }
+        state.pc += 2
     }
 
     override fun pop(reg: Int) {
         for (i in 0..reg) {
             state.registers[i] = state.ram[state.index + i]
         }
+        state.pc += 2
     }
 
 }
