@@ -1,9 +1,7 @@
 package com.teddyheinen.chip8
 
 import java.util.*
-import kotlin.experimental.and
-import kotlin.experimental.or
-import kotlin.experimental.xor
+import kotlin.experimental.*
 
 
 class Interpreter(val state: EmuState) : Decoder {
@@ -137,7 +135,21 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun draw(reg1: Int, reg2: Int, value: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        var pixelOverwritten: Boolean = false
+        for(i in 0..value-1) {
+            val b: Int = state.ram[state.index + i].toInt()
+            for(j in 0..7) {
+                val bit: Int = b shr j
+                val x: Int = state.registers[reg1] % 64
+                val y: Int = state.registers[reg2] % 32
+                val original = state.screen[x][y]
+                val pixel = original xor bit.toByte()
+                state.screen[x][y] = pixel
+                if(original.toInt() == 1) state.registers[0xf] = 1
+            }
+        }
+        state.pc += 2
+        state.updateScreen = true
     }
 
     override fun jkey(reg: Int) {
@@ -160,7 +172,7 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun waitkey(reg: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.waitForKey = reg
     }
 
     override fun setdelay(reg: Int) {
