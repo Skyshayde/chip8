@@ -6,15 +6,20 @@ import kotlin.experimental.*
 
 class Interpreter(val state: EmuState) : Decoder {
     override fun before(opCode: Int, address: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.updateScreen = false
     }
 
     override fun unknown(opCode: Int, address: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw UnsupportedOperationException("Operation 0x${opCode.hex} does not match with an implemented operation.")
     }
 
     override fun clear() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        for(i in 0..state.screen.size) {
+            for(j in 0..state.screen[i].size) {
+                state.screen[i][j] = 0
+            }
+        }
+        state.updateScreen = true;
     }
 
     override fun ret() {
