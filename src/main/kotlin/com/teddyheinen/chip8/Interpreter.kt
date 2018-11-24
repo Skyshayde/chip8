@@ -171,7 +171,7 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun addi(reg: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.index = state.index + state.registers[reg]
     }
 
     override fun spritei(reg: Int) {
