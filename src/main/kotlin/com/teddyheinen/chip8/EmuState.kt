@@ -9,4 +9,5 @@ data class EmuState(val ram: ByteArray = ByteArray(4096),
                     var delay: Int = 0,
                     var sound: Int = 0,
                     val keys: ByteArray = ByteArray(16),
-                    val programSize: Int = 0)
+                    val programSize: Int = 0,
+                    val screen: Array<ByteArray> = Array(64, {ByteArray(32)}))

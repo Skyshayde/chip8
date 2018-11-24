@@ -148,10 +148,12 @@ class Interpreter(val state: EmuState) : Decoder {
         if(state.keys[state.registers[reg].toInt()] == 0.toByte()) {
             state.pc += 2
         }
-        state.pc += 2    }
+        state.pc += 2
+    }
 
     override fun getdelay(reg: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.registers[reg] = state.delay.toByte()
+        state.pc += 2
     }
 
     override fun waitkey(reg: Int) {
@@ -159,11 +161,13 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun setdelay(reg: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.delay = state.registers[reg].toInt()
+        state.pc += 2
     }
 
     override fun setsound(reg: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        state.sound = state.registers[reg].toInt()
+        state.pc += 2
     }
 
     override fun addi(reg: Int) {
