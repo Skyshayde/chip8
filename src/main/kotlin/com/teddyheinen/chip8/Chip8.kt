@@ -118,6 +118,6 @@ fun decode(decoder: Decoder, address: Int, msb: Byte, lsb: Byte) {
 
 
     }
-
+    println(opCode.hex)
 }
 
