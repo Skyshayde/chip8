@@ -140,7 +140,6 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun draw(reg1: Int, reg2: Int, value: Int) {
-        var pixelOverwritten: Boolean = false
         for(i in 0..value-1) {
             val b: Int = state.ram[state.index + i].toInt()
             for(j in 0..7) {
