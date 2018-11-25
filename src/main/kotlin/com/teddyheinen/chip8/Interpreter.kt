@@ -129,7 +129,6 @@ class Interpreter(val state: EmuState) : Decoder {
 
     override fun jmpv0(address: Int) {
         state.pc = state.pc + address.toByte();
-        state.pc += 2
     }
 
     override fun rand(reg: Int, value: Int) {
@@ -143,9 +142,9 @@ class Interpreter(val state: EmuState) : Decoder {
         for(i in 0..value-1) {
             val b: Int = state.ram[state.index + i].toInt()
             for(j in 0..7) {
-                val bit: Int = b shr j
-                val x: Int = state.registers[reg1] % 64
-                val y: Int = state.registers[reg2] % 32
+                val bit: Int = (b shr (j-7)) and 1
+                val x: Int = (state.registers[reg1] + j) % 64
+                val y: Int = (state.registers[reg2] + i) % 32
                 val original = state.screen[x][y]
                 val pixel = original xor bit.toByte()
                 state.screen[x][y] = pixel
