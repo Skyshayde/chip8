@@ -1,12 +1,22 @@
 package com.teddyheinen.chip8
 
+import java.awt.Dimension
 import java.io.BufferedInputStream
 import java.io.DataInputStream
 import java.io.FileInputStream
+import javax.swing.JFrame
+import javax.swing.WindowConstants
+
+val screen: Screen = Screen()
 
 fun main(args: Array<String>) {
     val state = loadRom("roms/maze.ch8")
-    println(disassemble(state))
+    val frame = JFrame()
+    frame.size = Dimension(64 * 8, 32 * 8)
+    frame.add(screen)
+    frame.setVisible(true)
+    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    interpret(state)
 }
 
 fun loadRom(rom: String): EmuState {
@@ -26,6 +36,18 @@ fun disassemble(emuState: EmuState): String {
         decode(decoder, addr, msb, lsb)
     }
     return decoder.toString()
+}
+
+fun interpret(state: EmuState) {
+    val decoder = Interpreter(state)
+    while (true) {
+        val msb = state.ram[state.pc]
+        val lsb = state.ram[state.pc + 1]
+        decode(decoder, state.pc, msb, lsb)
+        if (state.updateScreen) {
+            screen.draw(state.screen)
+        }
+    }
 }
 
 fun decode(decoder: Decoder, address: Int, msb: Byte, lsb: Byte) {
@@ -68,7 +90,7 @@ fun decode(decoder: Decoder, address: Int, msb: Byte, lsb: Byte) {
         0xc -> decoder.rand(msb.low, lsb.toInt())
         0xd -> decoder.draw(msb.low, lsb.high, lsb.low)
         0xe -> {
-            when (lsb.toInt() or 0xff) {
+            when (lsb.toInt()) {
                 0x9e -> decoder.jkey(msb.low)
                 0xa1 -> decoder.jnkey(msb.low)
                 else -> decoder.unknown(opCode, address)
@@ -76,7 +98,7 @@ fun decode(decoder: Decoder, address: Int, msb: Byte, lsb: Byte) {
         }
         0xf -> {
             val reg = msb.low
-            when (lsb.toInt() or 0xff) {
+            when (lsb.toInt()) {
                 0x07 -> decoder.getdelay(reg)
                 0x0a -> decoder.waitkey(reg)
                 0x15 -> decoder.setdelay(reg)
@@ -86,7 +108,10 @@ fun decode(decoder: Decoder, address: Int, msb: Byte, lsb: Byte) {
                 0x33 -> decoder.bcd(reg)
                 0x55 -> decoder.push(reg)
                 0x65 -> decoder.pop(reg)
-                else -> decoder.unknown(opCode, address)
+                else -> {
+                    println(lsb.toInt())
+                    decoder.unknown(opCode, address)
+                }
             }
         }
         else -> decoder.unknown(opCode, address)
@@ -95,3 +120,4 @@ fun decode(decoder: Decoder, address: Int, msb: Byte, lsb: Byte) {
     }
 
 }
+
