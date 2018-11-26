@@ -175,6 +175,7 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun waitkey(reg: Int) {
+        // TODO need to actually implement this on the rest of the emulator
         state.waitForKey = reg
     }
 
