@@ -6,6 +6,11 @@ import java.io.DataInputStream
 import java.io.FileInputStream
 import javax.swing.JFrame
 import javax.swing.WindowConstants
+import kotlin.concurrent.fixedRateTimer
+import kotlin.concurrent.thread
+
+val SOUND_DECREMENT_RATE: Float = 60F
+val EXECUTION_RATE: Float = 500F
 
 
 fun main(args: Array<String>) {
@@ -39,15 +44,24 @@ fun disassemble(emuState: EmuState): String {
 
 fun interpret(state: EmuState) {
     val decoder = Interpreter(state)
-    while (true) {
-        val msb = state.ram[state.pc]
-        val lsb = state.ram[state.pc + 1]
-        decode(decoder, state.pc, msb, lsb)
-        if (state.updateScreen) {
-            state.screen.repaint()
+    fixedRateTimer("Execution", period = ((1 / EXECUTION_RATE) * 1000).toLong()) {
+        thread() {
+            val msb = state.ram[state.pc]
+            val lsb = state.ram[state.pc + 1]
+            decode(decoder, state.pc, msb, lsb)
+            if (state.updateScreen) {
+                state.screen.repaint()
+            }
+        }
+    }
+    fixedRateTimer("Delay/Sound", period = ((1 / SOUND_DECREMENT_RATE) * 1000).toLong()) {
+        thread() {
+            if(state.sound > 0) state.sound--
+            if(state.delay > 0) state.delay--
         }
     }
 }
+
 
 fun decode(decoder: Decoder, address: Int, msb: Byte, lsb: Byte) {
     val opCode = (msb.toInt() shl 8 or lsb.toInt().and(0xff)).and(0xffff)
