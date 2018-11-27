@@ -7,13 +7,12 @@ import java.io.FileInputStream
 import javax.swing.JFrame
 import javax.swing.WindowConstants
 
-val screen: Screen = Screen()
 
 fun main(args: Array<String>) {
     val state = loadRom("roms/maze.ch8")
     val frame = JFrame()
     frame.size = Dimension(64 * 8, 32 * 8)
-    frame.add(screen)
+    frame.add(state.screen)
     frame.setVisible(true)
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     interpret(state)
@@ -45,7 +44,7 @@ fun interpret(state: EmuState) {
         val lsb = state.ram[state.pc + 1]
         decode(decoder, state.pc, msb, lsb)
         if (state.updateScreen) {
-            screen.draw(state.screen)
+            state.screen.repaint()
         }
     }
 }

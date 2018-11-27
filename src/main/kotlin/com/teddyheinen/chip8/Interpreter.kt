@@ -14,9 +14,9 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun clear() {
-        for(i in 0..state.screen.size) {
-            for(j in 0..state.screen[i].size) {
-                state.screen[i][j] = 0
+        for(i in 0..state.screen.screen.size) {
+            for(j in 0..state.screen.screen[i].size) {
+                state.screen.screen[i][j] = 0
             }
         }
         state.updateScreen = true;
@@ -145,9 +145,9 @@ class Interpreter(val state: EmuState) : Decoder {
                 val bit: Int = (b shr (j-7)) and 1
                 val x: Int = (state.registers[reg1] + j) % 64
                 val y: Int = (state.registers[reg2] + i) % 32
-                val original = state.screen[x][y]
+                val original = state.screen.screen[x][y]
                 val pixel = original xor bit.toByte()
-                state.screen[x][y] = pixel
+                state.screen.screen[x][y] = pixel
                 if(original.toInt() == 1) state.registers[0xf] = 1
             }
         }

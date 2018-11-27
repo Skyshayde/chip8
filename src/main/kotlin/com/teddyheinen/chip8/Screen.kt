@@ -7,7 +7,7 @@ import javax.swing.JPanel
 
 class Screen: JPanel() {
 
-    var screen: Array<ByteArray> = emptyArray()
+    var screen: Array<ByteArray> = Array(64, {ByteArray(32)})
 
     init {
         size = Dimension(64 * 8, 32 * 8)
