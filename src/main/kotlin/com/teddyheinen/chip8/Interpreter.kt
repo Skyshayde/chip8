@@ -14,8 +14,8 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun clear() {
-        for(i in 0..state.screen.screen.size) {
-            for(j in 0..state.screen.screen[i].size) {
+        for (i in 0..state.screen.screen.size) {
+            for (j in 0..state.screen.screen[i].size) {
                 state.screen.screen[i][j] = 0
             }
         }
@@ -23,7 +23,7 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun ret() {
-        state.pc = state.stack.last();
+        state.pc = state.stack[state.sp]
         state.sp--;
     }
 
@@ -58,6 +58,13 @@ class Interpreter(val state: EmuState) : Decoder {
         state.pc += 2;
     }
 
+    override fun skipNotEqualRegister(reg1: Int, reg2: Int) {
+        if (state.registers[reg1] != state.registers[reg2]) {
+            state.pc += 2;
+        }
+        state.pc += 2;
+    }
+
     override fun set(reg: Int, value: Int) {
         state.registers[reg] = value.toByte();
         state.pc += 2;
@@ -74,34 +81,36 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun or(reg1: Int, reg2: Int) {
-        state.registers[reg1] = state.registers[reg1].or(state.registers[reg2]);
+        state.registers[reg1] = state.registers[reg1] or state.registers[reg2];
         state.pc += 2;
     }
 
     override fun and(reg1: Int, reg2: Int) {
-        state.registers[reg1] = state.registers[reg1].and(state.registers[reg2]);
+        state.registers[reg1] = state.registers[reg1] and state.registers[reg2];
         state.pc += 2;
     }
 
     override fun xor(reg1: Int, reg2: Int) {
-        state.registers[reg1] = state.registers[reg1].xor(state.registers[reg2]);
+        state.registers[reg1] = state.registers[reg1] xor state.registers[reg2];
         state.pc += 2;
     }
 
     override fun addr(reg1: Int, reg2: Int) {
-        state.registers[reg1] = (state.registers[reg1] + state.registers[reg2]).toByte();
+        val sum: Int = (state.registers[reg1] + state.registers[reg2])
+        state.registers[reg1] = (sum and 255).toByte();
+        state.registers[0xf] = if (sum > 255) 1 else 0
         state.pc += 2;
     }
 
     override fun subr(reg1: Int, reg2: Int) {
-        state.registers[reg1] = (state.registers[reg1] - state.registers[reg2]).toByte();
         state.registers[0xF] = if (state.registers[reg1] > state.registers[reg2]) 1 else 0
+        state.registers[reg1] = (state.registers[reg1] - state.registers[reg2]).toByte();
         state.pc += 2;
     }
 
     override fun shr(reg1: Int) {
         state.registers[0xf] = state.registers[reg1].and(0x1)
-        state.registers[reg1] = (state.registers[reg1] / 2).toByte();
+        state.registers[reg1] = (state.registers[reg1].toInt() shr 1).toByte()
         state.pc += 2;
     }
 
@@ -113,14 +122,10 @@ class Interpreter(val state: EmuState) : Decoder {
 
     override fun shl(reg1: Int) {
         state.registers[0xf] = state.registers[reg1].and(0x1)
-        state.registers[reg1] = (state.registers[reg1] * 2).toByte();
-        state.pc += 2; }
+        state.registers[reg1] = (state.registers[reg1].toInt() shl 1).toByte();
+        state.pc += 2;
+    }
 
-    override fun skipNotEqualRegister(reg1: Int, reg2: Int) {
-        if (state.registers[reg1] != state.registers[reg2]) {
-            state.pc += 2;
-        }
-        state.pc += 2; }
 
     override fun seti(value: Int) {
         state.index = value;
@@ -128,27 +133,25 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun jmpv0(address: Int) {
-        state.pc = state.pc + address.toByte();
+        state.pc += address.toByte();
     }
 
     override fun rand(reg: Int, value: Int) {
-        val b: ByteArray = ByteArray(1);
-        Random().nextBytes(b)
-        state.registers[reg] = b[0].and(value.toByte());
+        state.registers[reg] = (Random().nextInt(256) and value).toByte();
         state.pc += 2
     }
 
     override fun draw(reg1: Int, reg2: Int, value: Int) {
-        for(i in 0..value-1) {
+        for (i in 0..value - 1) {
             val b: Int = state.ram[state.index + i].toInt()
-            for(j in 0..7) {
-                val bit: Int = (b shr (j-7)) and 1
+            for (j in 0..7) {
+                val bit: Int = (b shr (j - 7)) and 1
                 val x: Int = (state.registers[reg1] + j) % 64
                 val y: Int = (state.registers[reg2] + i) % 32
                 val original = state.screen.screen[x][y]
                 val pixel = original xor bit.toByte()
                 state.screen.screen[x][y] = pixel
-                if(original.toInt() == 1) state.registers[0xf] = 1
+                if (original.toInt() == 1) state.registers[0xf] = 1
             }
         }
         state.pc += 2
@@ -190,18 +193,19 @@ class Interpreter(val state: EmuState) : Decoder {
     }
 
     override fun addi(reg: Int) {
-        state.index = state.index + state.registers[reg]
+        state.index += state.registers[reg]
         state.pc += 2
     }
 
     override fun spritei(reg: Int) {
         state.index = state.registers[reg] * 5
+        if(state.index >= 80) state.index = 0
         state.pc += 2
     }
 
     override fun bcd(reg: Int) {
         var index: Int = state.index
-        for(i in state.registers[reg].toString()) {
+        for (i in state.registers[reg].toString()) {
             state.ram[index] = i.toByte()
             index++
         }
