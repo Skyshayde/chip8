@@ -143,9 +143,9 @@ class Interpreter(val state: EmuState) : Decoder {
 
     override fun draw(reg1: Int, reg2: Int, value: Int) {
         for (i in 0..value - 1) {
-            val b: Int = state.ram[state.index + i].toInt()
-            for (j in 0..7) {
-                val bit: Int = (b shr (j - 7)) and 1
+            val b: String = state.ram[state.index + i].toString(2).removePrefix("-")
+            for (j in 0..b.length-1) {
+                val bit: Int = b[j].toInt()
                 val x: Int = (state.registers[reg1] + j) % 64
                 val y: Int = (state.registers[reg2] + i) % 32
                 val original = state.screen.screen[x][y]

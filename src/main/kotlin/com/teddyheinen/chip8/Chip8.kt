@@ -44,20 +44,19 @@ fun disassemble(emuState: EmuState): String {
 
 fun interpret(state: EmuState) {
     val decoder = Interpreter(state)
+    //TODO find a better way to schedule this
     fixedRateTimer("Execution", period = ((1 / EXECUTION_RATE) * 1000).toLong()) {
-        thread() {
-            val msb = state.ram[state.pc]
-            val lsb = state.ram[state.pc + 1]
-            decode(decoder, state.pc, msb, lsb)
-            if (state.updateScreen) {
-                state.screen.repaint()
-            }
+        val msb = state.ram[state.pc]
+        val lsb = state.ram[state.pc + 1]
+        decode(decoder, state.pc, msb, lsb)
+        if (state.updateScreen) {
+            state.screen.repaint()
         }
     }
     fixedRateTimer("Delay/Sound", period = ((1 / SOUND_DECREMENT_RATE) * 1000).toLong()) {
         thread() {
-            if(state.sound > 0) state.sound--
-            if(state.delay > 0) state.delay--
+            if (state.sound > 0) state.sound--
+            if (state.delay > 0) state.delay--
         }
     }
 }
