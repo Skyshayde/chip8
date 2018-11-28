@@ -12,4 +12,5 @@ data class EmuState(val ram: ByteArray = ByteArray(4096),
                     val programSize: Int = 0,
                     val screen: Screen = Screen(),
                     var updateScreen: Boolean = false,
-                    var waitForKey: Int = -1)
+                    var waitForKey: Int = -1,
+                    val speed: Float = 500F)
