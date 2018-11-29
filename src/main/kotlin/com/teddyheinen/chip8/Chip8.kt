@@ -4,19 +4,27 @@ import java.awt.Dimension
 import java.io.BufferedInputStream
 import java.io.DataInputStream
 import java.io.FileInputStream
-import javax.swing.JFrame
-import javax.swing.WindowConstants
+import javax.swing.*
 import kotlin.concurrent.fixedRateTimer
 import kotlin.concurrent.thread
+
 
 val SOUND_DECREMENT_RATE: Float = 60F
 
 
 fun main(args: Array<String>) {
     val state = loadRom("roms/maze.ch8")
+    val menuBar: JMenuBar = JMenuBar()
+    val menu: JMenu = JMenu("File")
+    val openRom: JMenuItem = JMenuItem("Open Rom")
+    menu.add(openRom)
+    menuBar.add(menu)
     val frame = JFrame()
     frame.size = Dimension(64 * 8, 32 * 8)
     frame.add(state.screen)
+    UIManager.setLookAndFeel(
+            UIManager.getSystemLookAndFeelClassName());
+    frame.jMenuBar = menuBar
     frame.setVisible(true)
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     interpret(state)
