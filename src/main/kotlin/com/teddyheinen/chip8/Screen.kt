@@ -17,7 +17,10 @@ class Screen: JPanel() {
     fun draw(screen: Array<ByteArray>) {
         this.screen = screen
     }
-
+    fun clear() {
+        screen = Array(64, {ByteArray(32)})
+        this.repaint()
+    }
     override fun paintComponent(g: Graphics) {
         super.paintComponent(g)
         g.color = Color.WHITE
